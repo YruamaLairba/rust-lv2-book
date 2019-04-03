@@ -6,7 +6,7 @@ use lv2::atom::prelude::*;
 use lv2::atom::sequence::TimeStamp;
 use lv2::core::{self, ports::*, *};
 use lv2::midi::atom::RawMidiMessage;
-use lv2::midi::message::StandardMidiMessage;
+use lv2::midi::message::MidiMessage;
 use lv2::urid::*;
 use std::ffi::CStr;
 
@@ -103,15 +103,15 @@ impl Plugin for Midigate {
             };
 
             // receiving note-ons and note-offs.
-            match midi_event.unwrap_standard() {
-                StandardMidiMessage::NoteOn {
+            match midi_event {
+                MidiMessage::NoteOn {
                     channel: _,
                     note: _,
                     velocity: _,
                 } => {
                     self.n_active_notes += 1;
                 }
-                StandardMidiMessage::NoteOff {
+                MidiMessage::NoteOff {
                     channel: _,
                     note: _,
                     velocity: _,
@@ -146,8 +146,4 @@ impl Plugin for Midigate {
     }
 }
 
-lv2_main!(
-    core,
-    Midigate,
-    b"urn:lv2rs-book:eg-midigate-rs\0"
-);
+lv2_main!(core, Midigate, b"urn:lv2rs-book:eg-midigate-rs\0");
