@@ -5,11 +5,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix urid: <http://lv2plug.in/ns/ext/urid#> .
 
-<https://github.com/Janonard/eg-midigate-rs>
+<urn:lv2rs-book:eg-midigate-rs>
         a lv2:Plugin ;
-        doap:name "Example MIDI Gate" ;
+        doap:name "Example MIDI Gate (Rust Version)" ;
         doap:license <http://opensource.org/licenses/isc> ;
-        lv2:project <http://github.com/Janonard> ;
+        lv2:project <https://github.com/Janonard/lv2rs-book> ;
         lv2:requiredFeature urid:map ;
         lv2:optionalFeature lv2:hardRTCapable ;
         lv2:port [

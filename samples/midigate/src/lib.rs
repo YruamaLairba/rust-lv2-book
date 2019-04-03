@@ -149,5 +149,5 @@ impl Plugin for Midigate {
 lv2_main!(
     core,
     Midigate,
-    b"https://github.com/Janonard/eg-midigate-rs\0"
+    b"urn:lv2rs-book:eg-midigate-rs\0"
 );

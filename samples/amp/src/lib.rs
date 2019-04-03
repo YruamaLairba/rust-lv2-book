@@ -51,4 +51,4 @@ impl Plugin for ExAmp {
     }
 }
 
-lv2_main!(core, ExAmp, b"https://github.com/Janonard/eg-amp-rs\0");
+lv2_main!(core, ExAmp, b"urn:lv2rs-book:eg-amp-rs\0");
