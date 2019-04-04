@@ -14,7 +14,7 @@ Install: {exe} install
 Uninstall: {exe} uninstall
 """
 
-EXAMPLES = ["amp", "midigate"]
+EXAMPLES = ["amp", "midigate", "fifths"]
 
 
 def print_usage():
