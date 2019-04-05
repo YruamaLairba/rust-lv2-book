@@ -44,10 +44,10 @@ impl Plugin for Midigate {
         Self: Sized,
     {
         let features = features?;
-        let mut cached_map = CachedMap::try_from_features(features)?;
+        let cached_map = CachedMap::try_from_features(features)?;
 
         let mut plugin = Self {
-            control_port: AtomInputPort::new(&mut cached_map),
+            control_port: AtomInputPort::new(),
             in_port: AudioInputPort::new(),
             null: Vec::with_capacity(rate as usize),
             out_port: AudioOutputPort::new(),
@@ -69,7 +69,7 @@ impl Plugin for Midigate {
 
     unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
         match port {
-            0 => self.control_port.connect_port(data as *const AtomHeader),
+            0 => self.control_port.connect_port(data as *const Atom),
             1 => self.in_port.connect(data as *const f32),
             2 => self.out_port.connect(data as *mut f32),
             _ => (),
@@ -86,15 +86,17 @@ impl Plugin for Midigate {
 
         let mut offset: usize = 0;
 
-        let events_atom = unsafe { self.control_port.get_atom(&mut self.urid_map) }.unwrap();
+        let events_atom = unsafe { self.control_port.get_atom_body(&mut self.urid_map) }.unwrap();
         let audio_input = unsafe { self.in_port.as_slice(n_samples) }.unwrap();
         let null_input = &self.null.as_slice()[0..(n_samples as usize)];
         let audio_output = unsafe { self.out_port.as_slice(n_samples) }.unwrap();
 
         for (time_stamp, midi_event) in events_atom.iter(&mut self.urid_map) {
-            let midi_event = match midi_event.cast::<RawMidiMessage>(&mut self.urid_map) {
-                Ok(midi_event) => midi_event,
-                Err(_) => continue,
+            let midi_event: &RawMidiMessage = {
+                match unsafe { midi_event.get_body(&mut self.urid_map) } {
+                    Ok(midi_event) => midi_event,
+                    Err(_) => continue,
+                }
             };
 
             let midi_event = match midi_event.interpret() {

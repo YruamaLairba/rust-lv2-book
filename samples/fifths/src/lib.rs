@@ -39,40 +39,37 @@ impl Plugin for Fifths {
         _bundle_path: &CStr,
         features: Option<&FeaturesList>,
     ) -> Option<Self> {
-        let features = features?;
-        let mut urids: CachedMap = CachedMap::try_from_features(features)?;
-
-        let input_port = AtomInputPort::new(&mut urids);
-
         Some(Self {
-            urids: urids,
+            urids: CachedMap::try_from_features(features?)?,
 
-            input: input_port,
+            input: AtomInputPort::new(),
             output: AtomOutputPort::new(),
         })
     }
 
     unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
         match port {
-            0 => self.input.connect_port(data as *const AtomHeader),
-            1 => self.output.connect_port(data as *mut AtomHeader),
+            0 => self.input.connect_port(data as *const Atom),
+            1 => self.output.connect_port(data as *mut Atom),
             _ => (),
         }
     }
 
     fn run(&mut self, _n_samples: u32) {
         // Getting the input sequence, the used time unit and the writing frame for the output.
-        let input_sequence = unsafe { self.input.get_atom(&mut self.urids) }.unwrap();
+        let input_sequence = unsafe { self.input.get_atom_body(&mut self.urids) }.unwrap();
         let time_unit = input_sequence.time_unit(&mut self.urids);
         let mut output_frame =
-            unsafe { self.output.write_atom(&time_unit, &mut self.urids) }.unwrap();
+            unsafe { self.output.write_atom_body(&time_unit, &mut self.urids) }.unwrap();
 
         // Iterating over all input events.
         for (time_stamp, atom) in input_sequence.iter(&mut self.urids) {
             // Get the midi event.
-            let midi_event = match atom.cast::<RawMidiMessage>(&mut self.urids) {
-                Ok(event) => event,
-                Err(_) => continue,
+            let midi_event: &RawMidiMessage = {
+                match unsafe { atom.get_body(&mut self.urids) } {
+                    Ok(event) => event,
+                    Err(_) => continue,
+                }
             };
 
             // Interpret it (wrap it into the `MidiMessage` enum).
