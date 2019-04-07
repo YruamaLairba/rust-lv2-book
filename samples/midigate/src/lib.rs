@@ -44,6 +44,8 @@ impl Plugin for Midigate {
         Self: Sized,
     {
         let features = features?;
+        // Try to create a `CacheMap`. It maps URIs to integers, called URIDs, and saves the mappings in
+        /// a `HashMap`. 
         let cached_map = CachedMap::try_from_features(features)?;
 
         let mut plugin = Self {
@@ -77,12 +79,22 @@ impl Plugin for Midigate {
     }
 
     fn run(&mut self, n_samples: u32) {
-        // Assure that we have enough null space.
-        // Allocation of new space will occur rarely since one second of frames were already
-        // allocated at initialization.
-        // If we're in a real-time environment, the block sizes won't be longer than a second, and
-        // if we're not, than allocation time does not matter.
+        /// Assure that we have enough null space. Since we are `lv2:hardRTCapable`, we should not
+        /// allocate memory, but we previously allocated one second of null-space and therefore we
+        /// will never lag. If we're in a real-time environment, the block sizes won't be longer
+        /// than a second, and will never allocate new null-space. Iif we're not, than allocation
+        /// time does not matter.
         self.assure_null_len(n_samples as usize);
+
+        /// This plugin works through the cycle in chunks starting at offset zero. The offset
+        /// represents the current time within this this cycle, so the output from 0 to offset has
+        /// already been written.
+        ///
+        /// This pattern of iterating over input events and writing output along the way is a common
+        /// idiom for writing sample accurate output based on event input.
+        ///
+        /// Note that this simple example simply writes input or zero for each sample based on the
+        /// gate. A serious implementation would need to envelope the transition to avoid aliasing.
 
         let mut offset: usize = 0;
 
