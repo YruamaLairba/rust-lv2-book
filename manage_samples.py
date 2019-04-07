@@ -8,6 +8,7 @@ CARGO_MISSING_MESSAGE = """cargo could not be found!
 
 You need a complete rust toolchain to build the examples. Please visit rustup.rs!"""
 USAGE = """USAGE:
+Update: {exe} update
 Build: {exe} build
 Clean: {exe} clean
 Install: {exe} install
@@ -19,6 +20,11 @@ EXAMPLES = ["amp", "midigate", "fifths"]
 
 def print_usage():
     print(USAGE.format(exe=sys.argv[0]))
+
+
+def update_example():
+    if os.system("cargo update") != 0:
+        quit()
 
 
 def build_example(name):
@@ -70,7 +76,9 @@ def main():
     for name in EXAMPLES:
         os.chdir("samples/{}".format(name))
 
-        if command == "build":
+        if command == "update":
+            update_example()
+        elif command == "build":
             build_example(name)
         elif command == "clean":
             clean_example(name)

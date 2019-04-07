@@ -1,12 +1,10 @@
 extern crate lv2rs as lv2;
 
-use lv2::atom::atom::*;
 use lv2::atom::ports::AtomInputPort;
 use lv2::atom::prelude::*;
 use lv2::atom::sequence::TimeStamp;
 use lv2::core::{self, ports::*, *};
-use lv2::midi::atom::RawMidiMessage;
-use lv2::midi::message::MidiMessage;
+use lv2::midi::{MidiMessage, RawMidiMessage};
 use lv2::urid::*;
 use std::ffi::CStr;
 
@@ -45,7 +43,7 @@ impl Plugin for Midigate {
     {
         let features = features?;
         // Try to create a `CacheMap`. It maps URIs to integers, called URIDs, and saves the mappings in
-        /// a `HashMap`. 
+        /// a `HashMap`.
         let cached_map = CachedMap::try_from_features(features)?;
 
         let mut plugin = Self {
@@ -69,7 +67,7 @@ impl Plugin for Midigate {
         self.n_active_notes = 0;
     }
 
-    unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
+    fn connect_port(&mut self, port: u32, data: *mut ()) {
         match port {
             0 => self.control_port.connect_port(data as *const Atom),
             1 => self.in_port.connect(data as *const f32),
@@ -95,7 +93,6 @@ impl Plugin for Midigate {
         ///
         /// Note that this simple example simply writes input or zero for each sample based on the
         /// gate. A serious implementation would need to envelope the transition to avoid aliasing.
-
         let mut offset: usize = 0;
 
         let events_atom = unsafe { self.control_port.get_atom_body(&mut self.urid_map) }.unwrap();

@@ -44,12 +44,11 @@ impl Plugin for ExAmp {
     ///
     /// In code, ports are referred to by index and since neither nor other plugins can check if the
     /// pointers are actually valid for this type, you have to absolutely make sure that you map the
-    /// right number to the right port. This is also the reason why it's unsafe, although nothing
-    /// too unsafe does happen here.
+    /// right number to the right port.
     ///
     /// This method is in the `audio` threading class, and is called in the same
     /// context as run().
-    unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
+    fn connect_port(&mut self, port: u32, data: *mut ()) {
         match port {
             0 => self.gain.connect(data as *const f32),
             1 => self.input.connect(data as *const f32),
@@ -107,7 +106,7 @@ impl Plugin for ExAmp {
     /// plugin descriptor.  It is usually used by plugins to implement additional
     /// interfaces. This plugin does not have any extension data, so this function
     /// returns None. Just like `activate` and `deactivate`, this function is already provided
-    /// by the trait. 
+    /// by the trait.
     ///
     /// This method is in the ``discovery'' threading class, so no other functions
     /// or methods in this plugin library will be called concurrently with it.

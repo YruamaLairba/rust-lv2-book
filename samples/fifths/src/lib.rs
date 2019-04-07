@@ -1,14 +1,12 @@
 extern crate lv2rs as lv2;
 extern crate ux;
-use std::ffi::CStr;
 
-use lv2::atom::atom::*;
 use lv2::atom::ports::*;
-use lv2::atom::prelude::*;
 use lv2::core::*;
-use lv2::midi::{atom::RawMidiMessage, message::MidiMessage};
-use lv2::urid::CachedMap;
-use ux::*;
+use lv2::midi::{MidiMessage, RawMidiMessage};
+use lv2::prelude::*;
+use lv2::urid::*;
+use std::ffi::CStr;
 
 /// The Fifths plugin.
 ///
@@ -47,7 +45,7 @@ impl Plugin for Fifths {
         })
     }
 
-    unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
+    fn connect_port(&mut self, port: u32, data: *mut ()) {
         match port {
             0 => self.input.connect_port(data as *const Atom),
             1 => self.output.connect_port(data as *mut Atom),
@@ -66,7 +64,7 @@ impl Plugin for Fifths {
         for (time_stamp, atom) in input_sequence.iter(&mut self.urids) {
             // Get the midi event.
             let midi_event: &RawMidiMessage = {
-                match unsafe { atom.get_body(&mut self.urids) } {
+                match atom.get_body(&mut self.urids) {
                     Ok(event) => event,
                     Err(_) => continue,
                 }

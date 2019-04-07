@@ -220,11 +220,11 @@ This function is in the `instantiation` threading class, so no other methods on 
 
 The `connect_port` method is called by the host to connect a particular port to a buffer.  The plugin must store the data location, but data may not be accessed except in run().
     
-In code, ports are referred to by index and since neither nor other plugins can check if the pointers are actually valid for this type, you have to absolutely make sure that you map the right number to the right port. This is also the reason why it's unsafe, although nothing too unsafe does happen here.
+In code, ports are referred to by index and since neither nor other plugins can check if the pointers are actually valid for this type, you have to absolutely make sure that you map the right number to the right port.
     
 This method is in the `audio` threading class, and is called in the same context as run().
 
-        unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
+        fn connect_port(&mut self, port: u32, data: *mut ()) {
             match port {
                 0 => self.gain.connect(data as *const f32),
                 1 => self.input.connect(data as *const f32),
@@ -362,13 +362,11 @@ The (optional) `lv2:designation` of this port is `lv2:control`, which indicates 
 
     extern crate lv2rs as lv2;
 
-    use lv2::atom::atom::*;
     use lv2::atom::ports::AtomInputPort;
     use lv2::atom::prelude::*;
     use lv2::atom::sequence::TimeStamp;
     use lv2::core::{self, ports::*, *};
-    use lv2::midi::atom::RawMidiMessage;
-    use lv2::midi::message::MidiMessage;
+    use lv2::midi::{MidiMessage, RawMidiMessage};
     use lv2::urid::*;
     use std::ffi::CStr;
 
@@ -426,14 +424,14 @@ Allocate null space for one second of frames. This should be enough for most cas
 
                 plugin.assure_null_len(rate as usize);
 
-                Some(plugin)
-            }
-        
+            Some(plugin)
+        }
+
         fn activate(&mut self) {
             self.n_active_notes = 0;
         }
 
-        unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
+        fn connect_port(&mut self, port: u32, data: *mut ()) {
             match port {
                 0 => self.control_port.connect_port(data as *const Atom),
                 1 => self.in_port.connect(data as *const f32),
@@ -520,6 +518,7 @@ Note that this simple example simply writes input or zero for each sample based 
 
     lv2_main!(core, Midigate, b"urn:lv2rs-book:eg-midigate-rs\0");
 
+
 ## Fifths
 
 This plugin demonstrates simple MIDI event reading and writing.
@@ -571,15 +570,13 @@ This plugin demonstrates simple MIDI event reading and writing.
 
     extern crate lv2rs as lv2;
     extern crate ux;
-    use std::ffi::CStr;
 
-    use lv2::atom::atom::*;
     use lv2::atom::ports::*;
-    use lv2::atom::prelude::*;
     use lv2::core::*;
-    use lv2::midi::{atom::RawMidiMessage, message::MidiMessage};
-    use lv2::urid::CachedMap;
-    use ux::*;
+    use lv2::midi::{MidiMessage, RawMidiMessage};
+    use lv2::prelude::*;
+    use lv2::urid::*;
+    use std::ffi::CStr;
 
     /// The Fifths plugin.
     ///
@@ -618,7 +615,7 @@ This plugin demonstrates simple MIDI event reading and writing.
             })
         }
 
-        unsafe fn connect_port(&mut self, port: u32, data: *mut ()) {
+        fn connect_port(&mut self, port: u32, data: *mut ()) {
             match port {
                 0 => self.input.connect_port(data as *const Atom),
                 1 => self.output.connect_port(data as *mut Atom),
@@ -637,7 +634,7 @@ This plugin demonstrates simple MIDI event reading and writing.
             for (time_stamp, atom) in input_sequence.iter(&mut self.urids) {
                 // Get the midi event.
                 let midi_event: &RawMidiMessage = {
-                    match unsafe { atom.get_body(&mut self.urids) } {
+                    match atom.get_body(&mut self.urids) {
                         Ok(event) => event,
                         Err(_) => continue,
                     }
@@ -703,3 +700,4 @@ This plugin demonstrates simple MIDI event reading and writing.
 
     use lv2::core as lv2_core;
     lv2_main!(lv2_core, Fifths, b"urn:lv2rs-book:eg-fifths-rs\0");
+
