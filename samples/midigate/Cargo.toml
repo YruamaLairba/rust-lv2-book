@@ -10,6 +10,3 @@ crate-type = ["dylib"]
 
 [dependencies]
 lv2rs = "0.3.0"
-
-[patch.crates-io]
-lv2rs = { git = "https://github.com/Janonard/lv2rs.git" }
