@@ -2,7 +2,7 @@
 
 ## Foreword
 
-This is a translation of the [LV2 Book by David Robillard](http://lv2plug.in/book/) for the [`lv2rs`](https://github.com/Janonard/lv2rs.git) library. As such, the examples in this book as well as the README's and comments are copied from the original, but the book itself has been altered to adapt for the differences between C and Rust.
+This book is an effort to translate the [LV2 Book by David Robillard](http://lv2plug.in/book/) for the [`lv2rs`](https://github.com/Janonard/lv2rs.git) crate. As such, the examples in this book as well as the README's and comments are copied from the original, but the book itself has been altered to adapt for the differences between C and Rust. Since the `lv2rs` crate has been discontinued in favor of [rust-lv2](https://github.com/rust-dsp/rust-lv2), this book is not and will never be complete. According to current planning, there is going to be a new translation for rust-lv2 as soon it's developed enough.
 
 ## Introduction
 
