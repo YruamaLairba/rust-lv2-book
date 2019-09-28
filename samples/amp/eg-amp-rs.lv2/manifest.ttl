@@ -28,8 +28,8 @@
 #
 # Turtle files contain a set of statements which describe resources. This file contains 3 statements:
 #
-# | Subject                      | Predicate      | Object       |
-# |------------------------------|----------------|--------------|
+# | Subject                         | Predicate      | Object       |
+# |---------------------------------|----------------|--------------|
 # | `<urn:rust-lv2-book:eg-amp-rs>` | `a `           | `lv2:Plugin` |
 # | `<urn:rust-lv2-book:eg-amp-rs>` | `lv2:binary`   | `<amp.so>`   |
 # | `<urn:rust-lv2-book:eg-amp-rs>` | `rdfs:seeAlso` | `<amp.ttl> ` |

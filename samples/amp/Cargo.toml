@@ -1,12 +1,14 @@
 [package]
 name = "eg-amp-rs"
 version = "0.2.0"
-authors = ["Janonard <janonard@protonmail.com>"]
+authors = ["Janonard <jan.opdenhoevel@protonmail.com>"]
 license = "ISC"
 edition = "2018"
 
+# Plugins are dynamic libraries. This setting tells cargo to export it this way.
 [lib]
 crate-type = ["dylib"]
 
+# This simple example only needs the core crate.
 [dependencies]
-lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git", branch = "core-convenience" }
