@@ -13,15 +13,15 @@
 # applicable, so hosts can present a nicer UI for loading plugins.  Note that
 # this URI is the identifier of the plugin, so if it does not match the one in
 # `manifest.ttl`, the host will not discover the plugin data at all.
-<urn:lv2rs-book:eg-amp-rs>
+<urn:rust-lv2-book:eg-amp-rs>
         a lv2:Plugin ,
                 lv2:AmplifierPlugin ;
 # Plugins are associated with a project, where common information like
 # developers, home page, and so on are described.  This plugin is part of the
-# lv2rs-book project, which has URI <https://github.com/Janonard/lv2rs-book>, and is described
+# rust-lv2-book project, which has URI <https://github.com/Janonard/rust-lv2-book>, and is described
 # elsewhere.  Typical plugin collections will describe the project in
 # manifest.ttl
-        lv2:project <https://github.com/Janonard/lv2rs-book> ;
+        lv2:project <https://github.com/Janonard/rust-lv2-book> ;
 # Every plugin must have a name, described with the doap:name property.
 # Translations to various languages can be added by putting a language tag
 # after strings as shown later.

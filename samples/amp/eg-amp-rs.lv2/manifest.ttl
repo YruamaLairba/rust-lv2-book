@@ -11,7 +11,7 @@
 # ==== URIs ====
 #
 # LV2 makes use of URIs as globally-unique identifiers for resources. For example, the ID of the
-# plugin described here is `<urn:lv2rs-book:eg-amp-rs>`. Note that URIs are only used as identifiers
+# plugin described here is `<urn:rust-lv2-book:eg-amp-rs>`. Note that URIs are only used as identifiers
 # and don't necessarily imply that something can be accessed at that address on the web (though that
 # may be the case).
 # 
@@ -30,28 +30,28 @@
 #
 # | Subject                      | Predicate      | Object       |
 # |------------------------------|----------------|--------------|
-# | `<urn:lv2rs-book:eg-amp-rs>` | `a `           | `lv2:Plugin` |
-# | `<urn:lv2rs-book:eg-amp-rs>` | `lv2:binary`   | `<amp.so>`   |
-# | `<urn:lv2rs-book:eg-amp-rs>` | `rdfs:seeAlso` | `<amp.ttl> ` |
+# | `<urn:rust-lv2-book:eg-amp-rs>` | `a `           | `lv2:Plugin` |
+# | `<urn:rust-lv2-book:eg-amp-rs>` | `lv2:binary`   | `<amp.so>`   |
+# | `<urn:rust-lv2-book:eg-amp-rs>` | `rdfs:seeAlso` | `<amp.ttl> ` |
 # 
-# Firstly, `<urn:lv2rs-book:eg-amp-rs>` is an LV2 plugin:
+# Firstly, `<urn:rust-lv2-book:eg-amp-rs>` is an LV2 plugin:
 
-<urn:lv2rs-book:eg-amp-rs> a lv2:Plugin .
+<urn:rust-lv2-book:eg-amp-rs> a lv2:Plugin .
 
 # The predicate `a` is a Turtle shorthand for `rdf:type`.
 #
 # The binary of that plugin can be found at `<amp.ext>`:
 
-<urn:lv2rs-book:eg-amp-rs> lv2:binary <amp.so> .
+<urn:rust-lv2-book:eg-amp-rs> lv2:binary <amp.so> .
 
 # This line is platform-dependet since it assumes that shared objects have the `.so` ending. For
 # example on Windows, this line should look like this:
 #
-#     <urn:lv2rs-book:eg-amp-rs> lv2:binary <amp.dll> .
+#     <urn:rust-lv2-book:eg-amp-rs> lv2:binary <amp.dll> .
 
 # Relative URIs in manifests are relative to the bundle directory, so this refers to a binary with
 # the given name in the same directory as this manifest.
 # 
 # Finally, more information about this plugin can be found in `<amp.ttl>`:
 
-<urn:lv2rs-book:eg-amp-rs> rdfs:seeAlso <amp.ttl> .
+<urn:rust-lv2-book:eg-amp-rs> rdfs:seeAlso <amp.ttl> .
