@@ -2,6 +2,7 @@
 from pathlib import Path
 import re
 import itertools
+import argparse
 
 
 class Line(object):
@@ -94,27 +95,24 @@ class Document(object):
                 yield str(line) + "\n"
 
 
-class Chapter(object):
-    def __init__(self, name, documents):
-        self.name = name
-        self.documents = [Document(path) for path in documents]
-
-    def __iter__(self):
-        yield "## {}\n\n".format(self.name)
-        for doc in self.documents:
-            for line in iter(doc):
-                yield line
-
-
 if __name__ == "__main__":
-    amp = Chapter(
-        "Simple Amplifier",
-        [
-            "amp/eg-amp-rs.lv2/manifest.ttl",
-            "amp/eg-amp-rs.lv2/amp.ttl",
-            "amp/Cargo.toml",
-            "amp/src/lib.rs",
-        ],
+    parser = argparse.ArgumentParser(
+        description="Compile a Markdown file from a source file."
     )
-    with open("book.md", "w") as output:
-        output.writelines(iter(amp))
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=True,
+        nargs=1,
+        help="Path to input source file.",
+    )
+    parser.add_argument(
+        "-o", "--output", type=str, required=True, nargs=1, help="Path to output file."
+    )
+    args = parser.parse_args()
+
+    document = Document(args.input[0])
+    with open(args.output[0], "w") as output:
+        output.writelines(str().join(iter(document)))
+
