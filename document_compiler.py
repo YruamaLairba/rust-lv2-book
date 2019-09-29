@@ -6,6 +6,10 @@ import argparse
 
 
 class Line(object):
+    """
+    Base class for a document line.
+    """
+
     def __init__(self, content):
         self.content = content
 
@@ -14,18 +18,37 @@ class Line(object):
 
 
 class CommentLine(Line):
+    """
+    A line that was a comment in the source document.
+    It will be outputed as normal text.
+    """
+
     pass
 
 
 class CodeLine(Line):
+    """
+    A line that was source code in the source document.
+    It will be outputed as quoted code.
+    """
+
     pass
 
 
 class Block(object):
+    """
+    Base class for a block of lines. This class represents normal, unmodified text.
+    """
+
     def __init__(self):
         self.lines = list()
 
     def add_line(self, line):
+        """
+        Add another line to the block.
+        `line` is supposed to be a `Line` object and has to be of the same type as the other lines
+        in this block.
+        """
         self.lines.append(line)
 
     def __iter__(self):
@@ -33,6 +56,10 @@ class Block(object):
 
 
 class CodeBlock(Block):
+    """
+    A block of code lines. It has additional features to export the lines as quoted code.
+    """
+
     def __init__(self, language):
         self.language = language
         self.lines = list()
@@ -43,56 +70,77 @@ class CodeBlock(Block):
         )
 
 
-class Document(object):
-    def __init__(self, path):
-        def make_lines(raw_lines, language):
-            if language == "rs":
-                comment_indicator_re = re.compile(r"\s*//\s*([^\n]*)")
-            else:
-                comment_indicator_re = re.compile(r"\s*#\s*([^\n]*)")
-            clean_line_re = re.compile(r"([^\n]+)")
+def make_lines(raw_lines, language):
+    """
+    Iterate through the raw lines and yield either a `CommentLine` or a `CodeLine`.
+    """
+    # Depending on the language, other comment indicators are used.
+    if language == "rs":
+        comment_indicator_re = re.compile(r"\s*//\s*([^\n]*)")
+    else:
+        comment_indicator_re = re.compile(r"\s*#\s*([^\n]*)")
+    # A RE to clean a code line of the new-line character and to remove empty code lines.
+    clean_line_re = re.compile(r"([^\n]+)")
 
-            for line in raw_lines:
-                is_comment = comment_indicator_re.match(line)
-                if is_comment:
-                    yield CommentLine(is_comment.group(1))
-                else:
-                    cleaned_line = clean_line_re.match(line)
-                    if cleaned_line is not None:
-                        yield CodeLine(cleaned_line.group(1))
+    for line in raw_lines:
+        is_comment = comment_indicator_re.match(line)
+        if is_comment:
+            yield CommentLine(is_comment.group(1))
+        else:
+            cleaned_line = clean_line_re.match(line)
+            if cleaned_line is not None:
+                yield CodeLine(cleaned_line.group(1))
 
-        def lines_to_blocks(lines, language):
-            last_block = None
-            for line in lines:
-                if last_block is None:
-                    new_block = True
-                elif type(last_block.lines[-1]) != type(line):
-                    yield last_block
-                    new_block = True
-                else:
-                    new_block = False
-                if new_block:
-                    if type(line) == CodeLine:
-                        last_block = CodeBlock(language)
-                    else:
-                        last_block = Block()
-                last_block.add_line(line)
+
+def lines_to_blocks(lines, language):
+    """
+    Iterate through the lines and group them in blocks.
+    """
+    last_block = None
+    for line in lines:
+        if last_block is None:
+            new_block = True
+        elif type(last_block.lines[-1]) != type(line):
             yield last_block
+            new_block = True
+        else:
+            new_block = False
 
-        path = Path(path)
-        language = re.match(r".([^\n]*)", path.suffix).group(1)
-        self.name = path.name
-        with open(path, "r") as input:
-            raw_lines = input.readlines()
-        lines = make_lines(raw_lines, language)
-        self.blocks = list(lines_to_blocks(lines, language))
+        if new_block:
+            if type(line) == CodeLine:
+                last_block = CodeBlock(language)
+            else:
+                last_block = Block()
 
-    def __iter__(self):
-        yield "### `{}`\n".format(self.name)
-        for block in self.blocks:
+        last_block.add_line(line)
+    yield last_block
+
+
+def build_document(path):
+    """
+    Create the markdown document from the source file in `path`.
+    """
+    # Determine the language of the source.
+    language = re.match(r".([^\n]*)", path.suffix).group(1)
+
+    # Read the raw lines fromt the input file.
+    with open(path, "r") as input:
+        raw_lines = input.readlines()
+
+    # Retrieve an iterator over all line object.
+    lines = make_lines(raw_lines, language)
+    # Retrieve an iterator over all blocks.
+    blocks = lines_to_blocks(lines, language)
+
+    # Generator function to produce each single line in the document.
+    def blocks_as_lines(blocks):
+        for block in blocks:
             yield "\n"
             for line in block:
                 yield str(line) + "\n"
+
+    # Join the blocks into one string.
+    return str().join(blocks_as_lines(blocks))
 
 
 if __name__ == "__main__":
@@ -112,7 +160,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    document = Document(args.input[0])
+    input_path = Path(args.input[0])
+
+    document = "### `{}`\n".format(input_path.name) + build_document(input_path)
+
     with open(args.output[0], "w") as output:
-        output.writelines(str().join(iter(document)))
+        output.write(document)
 
