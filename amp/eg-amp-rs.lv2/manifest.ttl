@@ -8,14 +8,14 @@
 # In a crate, this should be a special folder that contains the Turtle files. After the crate was
 # build, the resulting shared object should also be copied into this folder.
 # 
-# ==== URIs ====
+# #### URIs
 #
 # LV2 makes use of URIs as globally-unique identifiers for resources. For example, the ID of the
 # plugin described here is `<urn:rust-lv2-book:eg-amp-rs>`. Note that URIs are only used as identifiers
 # and don't necessarily imply that something can be accessed at that address on the web (though that
 # may be the case).
 # 
-# ==== Namespace Prefixes ====
+# #### Namespace Prefixes
 #
 # Turtle files contain many URIs, but prefixes can be defined to improve readability. For example,
 # with the `lv2:` prefix below, `lv2:Plugin` can be written instead of 
@@ -24,7 +24,7 @@
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-# ==== Describing a Plugin ====
+# #### Describing a Plugin
 #
 # Turtle files contain a set of statements which describe resources. This file contains 3 statements:
 #
@@ -44,11 +44,7 @@
 
 <urn:rust-lv2-book:eg-amp-rs> lv2:binary <amp.so> .
 
-# This line is platform-dependet since it assumes that shared objects have the `.so` ending. For
-# example on Windows, this line should look like this:
-#
-#     <urn:rust-lv2-book:eg-amp-rs> lv2:binary <amp.dll> .
-
+# This line is platform-dependet since it assumes that shared objects have the `.so` ending. On Windows, it should be ending with `.dll`.
 # Relative URIs in manifests are relative to the bundle directory, so this refers to a binary with
 # the given name in the same directory as this manifest.
 # 
