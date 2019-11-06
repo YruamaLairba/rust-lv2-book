@@ -2,7 +2,7 @@
 [package]
 name = "eg-amp-rs"
 version = "0.2.0"
-authors = ["Janonard <jan.opdenhoevel@protonmail.com>"]
+authors = ["Jan-Oliver 'Janonard' Opdenhövel <jan.opdenhoevel@protonmail.com>"]
 license = "ISC"
 edition = "2018"
 
@@ -12,4 +12,4 @@ crate-type = ["dylib"]
 
 # This simple example only needs the core crate.
 [dependencies]
-lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git", branch = "core-convenience" }
+lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git", branch = "master" }

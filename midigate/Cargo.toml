@@ -1,0 +1,33 @@
+[package]
+name = "eg-midigate-rs"
+version = "0.1.0"
+authors = ["Jan-Oliver 'Janonard' Opdenhövel <jan.opdenhoevel@protonmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["dylib"]
+
+[dependencies]
+wmidi = "3.1.0"
+
+[dependencies.lv2-core]
+git = "https://github.com/RustAudio/rust-lv2.git"
+branch = "midi"
+
+[dependencies.lv2-urid]
+git = "https://github.com/RustAudio/rust-lv2.git"
+branch = "midi"
+
+[dependencies.lv2-atom]
+git = "https://github.com/RustAudio/rust-lv2.git"
+branch = "midi"
+
+[dependencies.lv2-units]
+git = "https://github.com/RustAudio/rust-lv2.git"
+branch = "midi"
+
+
+[dependencies.lv2-midi]
+git = "https://github.com/RustAudio/rust-lv2.git"
+branch = "midi"
+features = ["wmidi"]
