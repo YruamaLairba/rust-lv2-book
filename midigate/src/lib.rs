@@ -26,11 +26,15 @@ pub struct Midigate {
 }
 
 unsafe impl UriBound for Midigate {
-    const URI: &'static [u8] = b"urn:rust-lv2-book:eg-midigate-rs";
+    const URI: &'static [u8] = b"urn:rust-lv2-book:eg-midigate-rs\0";
 }
 
 impl Midigate {
-    fn write_output(&mut self, ports: &mut Ports, offset: usize, len: usize) {
+    fn write_output(&mut self, ports: &mut Ports, offset: usize, mut len: usize) {
+        if ports.input.len() < offset + len {
+            len = ports.input.len() - offset;
+        }
+
         let active = if self.program == 0 {
             self.n_active_notes > 0
         } else {
@@ -72,36 +76,47 @@ impl Plugin for Midigate {
 
     fn run(&mut self, ports: &mut Ports) {
         let mut offset: usize = 0;
+        let event_urid = self.midi_urids.event;
 
-        let message_iter = ports
+        if let Some(message_iter) = ports
             .control
-            .read(self.atom_urids.sequence, self.unit_urids.beat);
+            .read(self.atom_urids.sequence, self.unit_urids.beat)
+        {
+            let message_iter = message_iter.filter_map(|(timestamp, message)| {
+                let timestamp = if let Some(timestamp) = timestamp.as_frames() {
+                    timestamp as usize
+                } else {
+                    return None;
+                };
 
-        if let Some(message_iter) = message_iter {
+                let message = if let Some(message) = message.read(event_urid, ()) {
+                    message
+                } else {
+                    return None;
+                };
+
+                Some((timestamp, message))
+            });
+
             for (timestamp, message) in message_iter {
-                if let Some(message) = message.read(self.midi_urids.event, ()) {
-                    if let Some(timestamp) = timestamp.as_frames() {
-                        match message {
-                            MidiMessage::NoteOn(_, _, _) => self.n_active_notes += 1,
-                            MidiMessage::NoteOff(_, _, _) => self.n_active_notes -= 1,
-                            MidiMessage::ProgramChange(_, program) => {
-                                let program: u8 = program.into();
-                                if program == 0 || program == 1 {
-                                    self.program = program;
-                                }
-                            }
-                            _ => (),
+                match message {
+                    MidiMessage::NoteOn(_, _, _) => self.n_active_notes += 1,
+                    MidiMessage::NoteOff(_, _, _) => self.n_active_notes -= 1,
+                    MidiMessage::ProgramChange(_, program) => {
+                        let program: u8 = program.into();
+                        if program == 0 || program == 1 {
+                            self.program = program;
                         }
-
-                        let timestamp = timestamp as usize;
-                        self.write_output(ports, offset, timestamp + offset);
-                        offset += timestamp;
                     }
+                    _ => (),
                 }
-            }
 
-            self.write_output(ports, offset, ports.input.len() - offset);
+                self.write_output(ports, offset, timestamp + offset);
+                offset += timestamp;
+            }
         }
+
+        self.write_output(ports, offset, ports.input.len() - offset);
     }
 }
 
