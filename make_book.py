@@ -51,8 +51,8 @@ class Block(object):
         """
         self.lines.append(line)
 
-    def __iter__(self):
-        return (str(line) for line in self.lines)
+    def __str__(self):
+        return "\n".join(map(str, self.lines))
 
 
 class CodeBlock(Block):
@@ -64,11 +64,49 @@ class CodeBlock(Block):
         self.language = language
         self.lines = list()
 
-    def __iter__(self):
-        return itertools.chain(
-            ["```{}".format(self.language)], super().__iter__(), ["```"]
-        )
+    def __str__(self):
+        return "\n```{}\n".format(self.language) + "\n".join(map(str, self.lines)) + "\n```\n"
 
+class File(object):
+
+    def __init__(self, path, language=None):
+        self.path = path
+
+        # Determine the language of the source.
+        if language is None:
+            language = re.match(r".([^\n]*)", path.suffix).group(1)
+
+        # Read the raw lines fromt the input file.
+        with open(path, "r") as input:
+            raw_lines = input.readlines()
+
+        # Retrieve an iterator over all line object.
+        lines = make_lines(raw_lines, language)
+        # Retrieve an iterator over all blocks.
+        self.blocks = list(lines_to_blocks(lines, language))
+
+    def __str__(self):
+        return "### {}\n\n".format(str(self.path)) + "\n".join(map(str, self.blocks))
+
+class Chapter(object):
+
+    def __init__(self, intro_path, paths):
+        self.intro = "".join(open(intro_path, "r").readlines())
+        self.files = list()
+        for path in paths:
+            self.files.append(File(Path(path)))
+
+    def __str__(self):
+        return self.intro + "\n" + "\n".join(map(str, self.files))
+
+class Book(object):
+
+    def __init__(self, intro_path, chapters):
+        self.intro = "".join(open(intro_path, "r").readlines())
+        self.chapters = chapters
+
+    def __str__(self):
+        return "{} \n".format(self.intro) + "\n".join(map(str, self.chapters))
 
 def make_lines(raw_lines, language):
     """
@@ -80,7 +118,7 @@ def make_lines(raw_lines, language):
     else:
         comment_indicator_re = re.compile(r"\s*#\s*([^\n]*)")
     # A RE to clean a code line of the new-line character and to remove empty code lines.
-    clean_line_re = re.compile(r"([^\n]+)")
+    clean_line_re = re.compile(r"([^\n]*)")
 
     for line in raw_lines:
         is_comment = comment_indicator_re.match(line)
@@ -142,28 +180,23 @@ def build_document(path):
     # Join the blocks into one string.
     return str().join(blocks_as_lines(blocks))
 
+amp = Chapter("introductions/amp.md", [
+    "amp/eg-amp-rs.lv2/amp.ttl",
+    "amp/eg-amp-rs.lv2/manifest.ttl",
+    "amp/Cargo.toml",
+    "amp/src/lib.rs",
+])
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Compile a Markdown file from a source file."
-    )
-    parser.add_argument(
-        "-i",
-        "--input",
-        type=str,
-        required=True,
-        nargs=1,
-        help="Path to input source file.",
-    )
-    parser.add_argument(
-        "-o", "--output", type=str, required=True, nargs=1, help="Path to output file."
-    )
-    args = parser.parse_args()
+midigate = Chapter("introductions/midigate.md", [
+    "midigate/eg-midigate-rs.lv2/midigate.ttl",
+    "midigate/eg-midigate-rs.lv2/manifest.ttl",
+    "midigate/Cargo.toml",
+    "midigate/src/lib.rs"
+])
 
-    input_path = Path(args.input[0])
+book = Book("introductions/intro.md", [
+    amp,
+    midigate
+])
 
-    document = "### `{}`\n".format(input_path.name) + build_document(input_path)
-
-    with open(args.output[0], "w") as output:
-        output.write(document)
-
+open("export/book.md", "w").write(str(book))

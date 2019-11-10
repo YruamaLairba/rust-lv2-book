@@ -26,7 +26,6 @@ branch = "midi"
 git = "https://github.com/RustAudio/rust-lv2.git"
 branch = "midi"
 
-
 [dependencies.lv2-midi]
 git = "https://github.com/RustAudio/rust-lv2.git"
 branch = "midi"

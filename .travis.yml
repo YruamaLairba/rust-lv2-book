@@ -5,7 +5,7 @@ python:
  - "3.7"
 
 script:
- - make export/book.md
+ - python make_book.py
 
 deploy:
   provider: pages
