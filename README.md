@@ -4,23 +4,17 @@ This repository contains the sample plugins of the "Programming LV2 Plugins - Ru
 
 ## Building the book
 
-The book is generated from the source files of the samples. In order to build the book, you need to have `make` and Python 3 installed. Simply type
+The book is generated from the source files of the samples. In order to build the book, you need to have Python 3 installed. Simply type
 
 ```bash
-make book.md
+python3 make_book.py
 ```
 
-and the book will be written to `book.md`.
+and the book will be written to `export/book.md`.
 
 ## Building the samples
 
-Every sample is a self-contained Rust crate; You can simply build it with cargo. If you want to install the samples on your machine, you can run
-
-```bash
-make install
-```
-
-This will build the crates and copy the bundles to a installation prefix. The standard prefix is `~/.lv2`. If you want to install the plugins in another directory, you can set in the top of the `Makefile`.
+Every sample is a self-contained Rust crate; You can simply build it with cargo. If you want to install the samples on your machine, you can run `./install.sh` in every crate's directory. This will build the crates and copy the bundles to `~/.lv2`.
 
 ## Licensing
 
