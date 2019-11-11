@@ -18,16 +18,16 @@
 # This plugin has three ports.  There is an audio input and output as before,
 # as well as a new AtomPort.  An AtomPort buffer contains an Atom, which is a
 # generic container for any type of data.  In this case, we want to receive
-# MIDI events, so the (mandatory) +atom:bufferType+ is atom:Sequence, which is
+# MIDI events, so the (mandatory) `atom:bufferType` is atom:Sequence, which is
 # a series of events with time stamps.
 #
 # Events themselves are also generic and can contain any type of data, but in
 # this case we are only interested in MIDI events.  The (optional)
-# +atom:supports+ property describes which event types are supported.  Though
+# `atom:supports` property describes which event types are supported.  Though
 # not required, this information should always be given so the host knows what
 # types of event it can expect the plugin to understand.
 #
-# The (optional) +lv2:designation+ of this port is +lv2:control+, which
+# The (optional) `lv2:designation` of this port is `lv2:control`, which
 # indicates that this is the "main" control port where the host should send
 # events it expects to configure the plugin, in this case changing the MIDI
 # program.  This is necessary since it is possible to have several MIDI input
