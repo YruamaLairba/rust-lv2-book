@@ -42,7 +42,7 @@
 #
 # The binary of that plugin can be found at `<amp.ext>`:
 
-<urn:rust-lv2-book:eg-amp-rs> lv2:binary <amp.so> .
+<urn:rust-lv2-book:eg-amp-rs> lv2:binary <libamp.so> .
 
 # This line is platform-dependet since it assumes that shared objects have the `.so` ending. On Windows, it should be ending with `.dll`.
 # Relative URIs in manifests are relative to the bundle directory, so this refers to a binary with

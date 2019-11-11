@@ -1,5 +1,5 @@
 [package]
-name = "eg-amp-rs"
+name = "amp"
 version = "0.2.0"
 authors = ["Jan-Oliver 'Janonard' Opdenhövel <jan.opdenhoevel@protonmail.com>"]
 license = "ISC"

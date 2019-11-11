@@ -181,22 +181,30 @@ def build_document(path):
     return str().join(blocks_as_lines(blocks))
 
 amp = Chapter("introductions/amp.md", [
-    "amp/eg-amp-rs.lv2/amp.ttl",
     "amp/eg-amp-rs.lv2/manifest.ttl",
+    "amp/eg-amp-rs.lv2/amp.ttl",
     "amp/Cargo.toml",
     "amp/src/lib.rs",
 ])
 
 midigate = Chapter("introductions/midigate.md", [
-    "midigate/eg-midigate-rs.lv2/midigate.ttl",
     "midigate/eg-midigate-rs.lv2/manifest.ttl",
+    "midigate/eg-midigate-rs.lv2/midigate.ttl",
     "midigate/Cargo.toml",
     "midigate/src/lib.rs"
 ])
 
+fifths = Chapter("introductions/fifths.md", [
+    "fifths/eg-fifths-rs.lv2/manifest.ttl",
+    "fifths/eg-fifths-rs.lv2/fifths.ttl",
+    "fifths/Cargo.toml",
+    "fifths/src/lib.rs"
+])
+
 book = Book("introductions/intro.md", [
     amp,
-    midigate
+    midigate,
+    fifths
 ])
 
 open("export/book.md", "w").write(str(book))
