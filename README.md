@@ -10,7 +10,7 @@ The book is generated from the source files of the samples. In order to build th
 python3 make_book.py
 ```
 
-and the book will be written to `export/book.md`.
+and the book will be written to `export/README.md`.
 
 ## Building the samples
 

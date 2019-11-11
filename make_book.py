@@ -207,4 +207,4 @@ book = Book("introductions/intro.md", [
     fifths
 ])
 
-open("export/book.md", "w").write(str(book))
+open("export/README.md", "w").write(str(book))
