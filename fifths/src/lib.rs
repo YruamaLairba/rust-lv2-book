@@ -78,6 +78,7 @@ impl Plugin for Fifths {
                                 MidiMessage::NoteOn(channel, note, velocity),
                             )
                             .unwrap();
+                        println!("Wrote a note-on");
                     }
                 }
                 MidiMessage::NoteOff(channel, note, velocity) => {
@@ -90,9 +91,10 @@ impl Plugin for Fifths {
                                 MidiMessage::NoteOff(channel, note, velocity),
                             )
                             .unwrap();
+                            println!("Wrote a note-off");
                     }
                 }
-                _ => (),
+                _ => println!("Something different!"),
             }
         }
     }
