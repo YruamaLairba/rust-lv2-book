@@ -14,7 +14,7 @@ pub struct Ports {
 
 #[derive(FeatureCollection)]
 pub struct Features<'a> {
-    map: &'a Map<'a>,
+    map: Map<'a>,
 }
 
 pub struct Midigate {

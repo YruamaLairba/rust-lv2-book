@@ -13,7 +13,7 @@ pub struct Ports {
 
 #[derive(FeatureCollection)]
 pub struct Features<'a> {
-    map: &'a Map<'a>,
+    map: Map<'a>,
 }
 
 pub struct Fifths {
@@ -69,7 +69,7 @@ impl Plugin for Fifths {
             match message {
                 MidiMessage::NoteOn(channel, note, velocity) => {
                     // Make a note 5th (7 semitones) higher than input.
-                    if let Some(note) = note.step(7) {
+                    if let Ok(note) = note.step(7) {
                         // Write the fifth. Writing is done after initialization.
                         output_sequence
                             .init(
@@ -82,7 +82,7 @@ impl Plugin for Fifths {
                 }
                 MidiMessage::NoteOff(channel, note, velocity) => {
                     // Do the same thing for `NoteOff`.
-                    if let Some(note) = note.step(7) {
+                    if let Ok(note) = note.step(7) {
                         output_sequence
                             .init(
                                 timestamp,

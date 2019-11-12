@@ -11,4 +11,4 @@ crate-type = ["dylib"]
 
 # This simple example only needs the core crate.
 [dependencies]
-lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git", branch = "master" }
+lv2-core = { git = "https://github.com/Janonard/rust-lv2.git" }
