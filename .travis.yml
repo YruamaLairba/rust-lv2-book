@@ -13,6 +13,7 @@ script:
  - cargo build --manifest-path midigate/Cargo.toml
  - cargo build --manifest-path fifths/Cargo.toml
  - python3 make_book.py
+ - cat export/index.md
 
 deploy:
   provider: pages
