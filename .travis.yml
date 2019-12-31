@@ -6,6 +6,7 @@ python:
 
 install:
  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ - source $HOME/.cargo/env
 
 script:
  - cargo build --manifest-path amp/Cargo.toml
