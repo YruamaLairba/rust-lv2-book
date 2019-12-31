@@ -60,7 +60,7 @@ impl Plugin for Fifths {
             output_sequence.forward(timestamp, atom);
 
             // Retrieve the message.
-            let message = if let Some(message) = atom.read(self.midi_urids.event, ()) {
+            let message = if let Some(message) = atom.read(self.midi_urids.wmidi, ()) {
                 message
             } else {
                 continue;
@@ -74,7 +74,7 @@ impl Plugin for Fifths {
                         output_sequence
                             .init(
                                 timestamp,
-                                self.midi_urids.event,
+                                self.midi_urids.wmidi,
                                 MidiMessage::NoteOn(channel, note, velocity),
                             )
                             .unwrap();
@@ -87,7 +87,7 @@ impl Plugin for Fifths {
                         output_sequence
                             .init(
                                 timestamp,
-                                self.midi_urids.event,
+                                self.midi_urids.wmidi,
                                 MidiMessage::NoteOff(channel, note, velocity),
                             )
                             .unwrap();

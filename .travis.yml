@@ -5,6 +5,9 @@ python:
  - "3.7"
 
 script:
+ - cargo build --manifest-path amp
+ - cargo build --manifest-path midigate
+ - cargo build --manifest-path fifths
  - python make_book.py
 
 deploy:

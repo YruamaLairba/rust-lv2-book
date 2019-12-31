@@ -9,8 +9,8 @@ crate-type = ["dylib"]
 
 [dependencies]
 wmidi = "3.1.0"
-lv2-core = { git = "https://github.com/Janonard/rust-lv2.git" }
-lv2-urid = { git = "https://github.com/Janonard/rust-lv2.git" }
-lv2-atom = { git = "https://github.com/Janonard/rust-lv2.git" }
-lv2-units = { git = "https://github.com/Janonard/rust-lv2.git" }
-lv2-midi = { git = "https://github.com/Janonard/rust-lv2.git", features = ["wmidi"]}
+lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-urid = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-atom = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-units = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-midi = { git = "https://github.com/RustAudio/rust-lv2.git", features = ["wmidi"]}

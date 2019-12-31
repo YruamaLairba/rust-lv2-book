@@ -101,7 +101,7 @@ impl Plugin for Midigate {
                 continue;
             };
 
-            let message = if let Some(message) = message.read(self.midi_urids.event, ()) {
+            let message = if let Some(message) = message.read(self.midi_urids.wmidi, ()) {
                 message
             } else {
                 continue;
