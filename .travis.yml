@@ -2,9 +2,9 @@ language: rust
 os: linux
 
 script:
- - cargo build --manifest-path amp
- - cargo build --manifest-path midigate
- - cargo build --manifest-path fifths
+ - cargo build --manifest-path amp/Cargo.toml
+ - cargo build --manifest-path midigate/Cargo.toml
+ - cargo build --manifest-path fifths/Cargo.toml
  - python3 make_book.py
 
 deploy:
