@@ -77,7 +77,7 @@ class File(object):
             language = re.match(r".([^\n]*)", path.suffix).group(1)
 
         # Read the raw lines fromt the input file.
-        with open(path, "r") as input:
+        with path.open("r") as input:
             raw_lines = input.readlines()
 
         # Retrieve an iterator over all line object.
