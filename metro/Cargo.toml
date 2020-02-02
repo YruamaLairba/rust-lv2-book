@@ -1,0 +1,10 @@
+[package]
+name = "metro"
+version = "0.1.0"
+authors = ["Yruama_Lairba <yruama_lairba@hotmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["dylib"]
+
+[dependencies]
