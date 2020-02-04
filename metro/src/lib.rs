@@ -5,23 +5,12 @@ use lv2_urid::prelude::*;
 
 #[allow(unused_imports)]
 use lv2_sys::{
-    LV2_TIME_URI,
-    LV2_TIME_PREFIX,
-    LV2_TIME__Time,
-    LV2_TIME__Position,
-    LV2_TIME__Rate,
-    LV2_TIME__position,
-    LV2_TIME__barBeat,
-    LV2_TIME__bar,
-    LV2_TIME__beat,
-    LV2_TIME__beatUnit,
-    LV2_TIME__beatsPerBar,
-    LV2_TIME__beatsPerMinute,
-    LV2_TIME__frame,
-    LV2_TIME__framesPerSecond,
-    LV2_TIME__speed
+    LV2_TIME__Position, LV2_TIME__Rate, LV2_TIME__Time, LV2_TIME__bar,
+    LV2_TIME__barBeat, LV2_TIME__beat, LV2_TIME__beatUnit,
+    LV2_TIME__beatsPerBar, LV2_TIME__beatsPerMinute, LV2_TIME__frame,
+    LV2_TIME__framesPerSecond, LV2_TIME__position, LV2_TIME__speed,
+    LV2_TIME_PREFIX, LV2_TIME_URI,
 };
-
 
 struct TimePosition;
 unsafe impl UriBound for TimePosition {
@@ -68,30 +57,32 @@ unsafe impl UriBound for Metro {
 }
 
 impl Metro {
-    fn update_position(&mut self, atom: &UnidentifiedAtom )
-    {
+    fn update_position(&mut self, atom: &UnidentifiedAtom) {
         println!("got time position");
-        if let Some((header, object_reader)) = atom.
-            read(self.atom_urids.object, ()) {
-                if header.otype == self.time_position_urid {
-                    for (property_header, atom) in object_reader {
-                        if property_header.key == self.time_barBeat_urid {
-                            println!("got time barBeat");
-                        }
-                        if property_header.key == 
-                            self.time_beatPerMinute_urid {
-                            println!("got time beatPerMinute");
-                        }
-                        if property_header.key == self.time_speed_urid {
-                            println!("got time speed");
-                        }
+        if let Some((header, object_reader)) =
+            atom.read(self.atom_urids.object, ())
+        {
+            if header.otype == self.time_position_urid {
+                for (property_header, atom) in object_reader {
+                    if property_header.key == self.time_barBeat_urid {
+                        let val =
+                            atom.read(self.atom_urids.float, ()).unwrap();
+                        println!("got time barBeat : {}", val);
                     }
-
+                    if property_header.key == self.time_beatPerMinute_urid
+                    {
+                        let val =
+                            atom.read(self.atom_urids.float, ()).unwrap();
+                        println!("got time beatPerMinute : {}", val);
+                    }
+                    if property_header.key == self.time_speed_urid {
+                        let val =
+                            atom.read(self.atom_urids.float, ()).unwrap();
+                        println!("got time speed : {}", val);
+                    }
                 }
             }
-
-
-
+        }
     }
 }
 
@@ -100,7 +91,10 @@ impl Plugin for Metro {
 
     type Features = Features<'static>;
 
-    fn new(_plugin_info: &PluginInfo, features: Features<'static>) -> Option<Self> {
+    fn new(
+        _plugin_info: &PluginInfo,
+        features: Features<'static>,
+    ) -> Option<Self> {
         let res = Self {
             atom_urids: features.map.populate_cache()?,
             unit_urids: features.map.populate_cache()?,
@@ -119,8 +113,9 @@ impl Plugin for Metro {
             .read(self.atom_urids.sequence, self.unit_urids.beat)
             .unwrap();
         for (_timestamp, atom) in sequence {
-            if let Some((header, object_reader)) = atom.
-                read(self.atom_urids.object, ()) {
+            if let Some((header, object_reader)) =
+                atom.read(self.atom_urids.object, ())
+            {
                 if header.otype == self.time_position_urid {
                     self.update_position(&atom);
                 }
