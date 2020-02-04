@@ -70,6 +70,28 @@ unsafe impl UriBound for Metro {
 impl Metro {
     fn update_position(&mut self, atom: &UnidentifiedAtom )
     {
+        println!("got time position");
+        if let Some((header, object_reader)) = atom.
+            read(self.atom_urids.object, ()) {
+                if header.otype == self.time_position_urid {
+                    for (property_header, atom) in object_reader {
+                        if property_header.key == self.time_barBeat_urid {
+                            println!("got time barBeat");
+                        }
+                        if property_header.key == 
+                            self.time_beatPerMinute_urid {
+                            println!("got time beatPerMinute");
+                        }
+                        if property_header.key == self.time_speed_urid {
+                            println!("got time speed");
+                        }
+                    }
+
+                }
+            }
+
+
+
     }
 }
 
@@ -100,7 +122,6 @@ impl Plugin for Metro {
             if let Some((header, object_reader)) = atom.
                 read(self.atom_urids.object, ()) {
                 if header.otype == self.time_position_urid {
-                    println!("got time position");
                     self.update_position(&atom);
                 }
             }
