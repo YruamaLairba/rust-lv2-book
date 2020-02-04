@@ -57,30 +57,23 @@ unsafe impl UriBound for Metro {
 }
 
 impl Metro {
-    fn update_position(&mut self, atom: &UnidentifiedAtom) {
+    fn update_position(
+        &mut self,
+        object_reader: lv2_atom::object::ObjectReader,
+    ) {
         println!("got time position");
-        if let Some((header, object_reader)) =
-            atom.read(self.atom_urids.object, ())
-        {
-            if header.otype == self.time_position_urid {
-                for (property_header, atom) in object_reader {
-                    if property_header.key == self.time_barBeat_urid {
-                        let val =
-                            atom.read(self.atom_urids.float, ()).unwrap();
-                        println!("got time barBeat : {}", val);
-                    }
-                    if property_header.key == self.time_beatPerMinute_urid
-                    {
-                        let val =
-                            atom.read(self.atom_urids.float, ()).unwrap();
-                        println!("got time beatPerMinute : {}", val);
-                    }
-                    if property_header.key == self.time_speed_urid {
-                        let val =
-                            atom.read(self.atom_urids.float, ()).unwrap();
-                        println!("got time speed : {}", val);
-                    }
-                }
+        for (property_header, atom) in object_reader {
+            if property_header.key == self.time_barBeat_urid {
+                let val = atom.read(self.atom_urids.float, ()).unwrap();
+                println!("got time barBeat : {}", val);
+            }
+            if property_header.key == self.time_beatPerMinute_urid {
+                let val = atom.read(self.atom_urids.float, ()).unwrap();
+                println!("got time beatPerMinute : {}", val);
+            }
+            if property_header.key == self.time_speed_urid {
+                let val = atom.read(self.atom_urids.float, ()).unwrap();
+                println!("got time speed : {}", val);
             }
         }
     }
@@ -117,7 +110,7 @@ impl Plugin for Metro {
                 atom.read(self.atom_urids.object, ())
             {
                 if header.otype == self.time_position_urid {
-                    self.update_position(&atom);
+                    self.update_position(object_reader);
                 }
             }
         }
