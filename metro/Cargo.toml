@@ -10,4 +10,6 @@ crate-type = ["dylib"]
 [dependencies]
 lv2-atom = { git = "https://github.com/RustAudio/rust-lv2.git" }
 lv2-core = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-units = { git = "https://github.com/RustAudio/rust-lv2.git" }
 lv2-urid = { git = "https://github.com/RustAudio/rust-lv2.git" }
+lv2-sys= { git = "https://github.com/RustAudio/rust-lv2.git" }
