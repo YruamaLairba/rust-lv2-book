@@ -83,6 +83,53 @@ unsafe impl UriBound for Metro {
 }
 
 impl Metro {
+    fn play(&mut self, ports: &mut Ports, begin: u32, end: u32)
+    {
+        let frames_per_beat:f32 = 60f32 / self.bpm * self.rate as f32;
+
+        if self.speed == 0f32 {
+            ports.output.iter_mut().for_each(|x| *x = 0f32);
+            return;
+        }
+
+        for i in begin..end {
+            match self.state {
+                State::Attack => {
+                    //Amplitude increase until attack_len
+                    ports.output[i as usize] = 
+                        self.wave[self.wave_offset as usize] *
+                        self.elapsed_len as f32 / self.attack_len as f32;
+                    if self.elapsed_len >= self.attack_len {
+                        self.state = State::Decay;
+                    }
+                },
+                State::Decay => {
+                    //Amplitude decrease until attack_len + decay_len
+                    ports.output[i as usize] = 
+                        self.wave[self.wave_offset as usize] *
+                        (1f32 - ((self.elapsed_len - self.attack_len)
+                                 as f32 / self.decay_len as f32));
+                    if self.elapsed_len >= self.attack_len + self.decay_len {
+                        self.state = State::Off;
+                    }
+                },
+                State::Off => {
+                    ports.output[i as usize] = 0f32;
+                }
+            }
+        }
+
+        //We continuously play the sine wave regardless of the envelope
+        self.wave_offset = (self.wave_offset + 1) % self.wave.len() as u32;
+
+        //Update elapsed time and start attack if necessary
+        self.elapsed_len+=1;
+        if self.elapsed_len == frames_per_beat as u32 {
+            self.state = State::Attack;
+            self.elapsed_len = 0;
+        }
+    }
+
     fn update_position(
         &mut self,
         object_reader: lv2_atom::object::ObjectReader,
