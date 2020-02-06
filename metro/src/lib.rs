@@ -134,19 +134,37 @@ impl Metro {
         &mut self,
         object_reader: lv2_atom::object::ObjectReader,
     ) {
-        println!("got time position");
+        //Received new transport position/speed
         for (property_header, atom) in object_reader {
             if property_header.key == self.time_barBeat_urid {
-                let val = atom.read(self.atom_urids.float, ()).unwrap();
-                println!("got time barBeat : {}", val);
-            }
-            if property_header.key == self.time_beatPerMinute_urid {
-                let val = atom.read(self.atom_urids.float, ()).unwrap();
-                println!("got time beatPerMinute : {}", val);
+                if let Some(val) = atom.read(self.atom_urids.float, ()) {
+                    self.bpm = val;
+                }
             }
             if property_header.key == self.time_speed_urid {
-                let val = atom.read(self.atom_urids.float, ()).unwrap();
-                println!("got time speed : {}", val);
+                if let Some(val) = atom.read(self.atom_urids.float, ()) {
+                    self.speed = val;
+                }
+            }
+            if property_header.key == self.time_beatPerMinute_urid {
+                if let Some(val) = atom.read(self.atom_urids.float, ()) {
+                    // Receveid a beat position, synchronise
+                    // This hard sync may cause clicks, a real plugin would
+                    // be more graceful
+                    let frames_per_beat =
+                        60f32 / self.bpm * self.rate as f32;
+                    let bar_beats = val;
+                    let beat_beats = bar_beats - bar_beats.floor();
+                    self.elapsed_len = (beat_beats * frames_per_beat) as u32;
+                    if self.elapsed_len < self.attack_len {
+                        self.state = State::Attack;
+                    } else if self.elapsed_len <
+                        self.attack_len + self.decay_len {
+                            self.state = State::Decay;
+                    } else {
+                        self.state = State::Off;
+                    }
+                }
             }
         }
     }
