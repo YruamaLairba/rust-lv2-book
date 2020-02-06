@@ -136,7 +136,7 @@ impl Metro {
     ) {
         //Received new transport position/speed
         for (property_header, atom) in object_reader {
-            if property_header.key == self.time_barBeat_urid {
+            if property_header.key == self.time_beatPerMinute_urid {
                 if let Some(val) = atom.read(self.atom_urids.float, ()) {
                     self.bpm = val;
                 }
@@ -146,7 +146,7 @@ impl Metro {
                     self.speed = val;
                 }
             }
-            if property_header.key == self.time_beatPerMinute_urid {
+            if property_header.key == self.time_barBeat_urid {
                 if let Some(val) = atom.read(self.atom_urids.float, ()) {
                     // Receveid a beat position, synchronise
                     // This hard sync may cause clicks, a real plugin would
