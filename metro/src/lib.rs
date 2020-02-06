@@ -222,7 +222,16 @@ impl Plugin for Metro {
             .control
             .read(self.atom_urids.sequence, self.unit_urids.beat)
             .unwrap();
-        for (_timestamp, atom) in sequence {
+        // Work forwards in time frame by frame, handling events as we go
+        let mut last_t = 0;
+        for event in sequence {
+            let (timestamp, atom): (TimeStamp, UnidentifiedAtom) = event;
+
+            // Play the click for the time slice from last_t until now
+            let frames = timestamp.as_frames().unwrap() as u32;
+            self.play(ports, last_t, frames);
+
+
             if let Some((header, object_reader)) =
                 atom.read(self.atom_urids.object, ())
             {
@@ -230,9 +239,13 @@ impl Plugin for Metro {
                     self.update_position(object_reader);
                 }
             }
+
+            // Update time for next iteration
+            last_t = frames;
         }
 
-        ports.output.iter_mut().for_each(|out| *out = 0f32);
+        // Play for remainder of cycle
+        self.play(ports, last_t, ports.output.len() as u32); 
     }
 }
 
