@@ -67,7 +67,7 @@ pub struct Metro {
     speed: f32, // Transport speed (usually 0=stop, 1=play)
 
     elapsed_len: u32, // Frames since the start of the last click
-    wave_offset: u32, // Current play offset in the wave
+    wave_offset: usize, // Current play offset in the wave
     state: State,     // current play state
 
     // One cycle of a sine wave
@@ -97,7 +97,7 @@ impl Metro {
                 State::Attack => {
                     //Amplitude increase until attack_len
                     ports.output[i as usize] = 
-                        self.wave[self.wave_offset as usize] *
+                        self.wave[self.wave_offset] *
                         self.elapsed_len as f32 / self.attack_len as f32;
                     if self.elapsed_len >= self.attack_len {
                         self.state = State::Decay;
@@ -106,7 +106,7 @@ impl Metro {
                 State::Decay => {
                     //Amplitude decrease until attack_len + decay_len
                     ports.output[i as usize] = 
-                        self.wave[self.wave_offset as usize] *
+                        self.wave[self.wave_offset] *
                         (1f32 - ((self.elapsed_len - self.attack_len)
                                  as f32 / self.decay_len as f32));
                     if self.elapsed_len >= self.attack_len + self.decay_len {
@@ -120,7 +120,7 @@ impl Metro {
         }
 
         //We continuously play the sine wave regardless of the envelope
-        self.wave_offset = (self.wave_offset + 1) % self.wave.len() as u32;
+        self.wave_offset = (self.wave_offset + 1) % self.wave.len();
 
         //Update elapsed time and start attack if necessary
         self.elapsed_len+=1;
