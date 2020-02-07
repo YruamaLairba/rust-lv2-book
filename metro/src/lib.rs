@@ -83,7 +83,7 @@ unsafe impl UriBound for Metro {
 }
 
 impl Metro {
-    fn play(&mut self, ports: &mut Ports, begin: u32, end: u32)
+    fn play(&mut self, ports: &mut Ports, begin: usize, end: usize)
     {
         let frames_per_beat:f32 = 60f32 / self.bpm * self.rate as f32;
 
@@ -96,7 +96,7 @@ impl Metro {
             match self.state {
                 State::Attack => {
                     //Amplitude increase until attack_len
-                    ports.output[i as usize] = 
+                    ports.output[i] = 
                         self.wave[self.wave_offset] *
                         self.elapsed_len as f32 / self.attack_len as f32;
                     if self.elapsed_len >= self.attack_len {
@@ -105,7 +105,7 @@ impl Metro {
                 },
                 State::Decay => {
                     //Amplitude decrease until attack_len + decay_len
-                    ports.output[i as usize] = 
+                    ports.output[i] = 
                         self.wave[self.wave_offset] *
                         (1f32 - ((self.elapsed_len - self.attack_len)
                                  as f32 / self.decay_len as f32));
@@ -114,7 +114,7 @@ impl Metro {
                     }
                 },
                 State::Off => {
-                    ports.output[i as usize] = 0f32;
+                    ports.output[i] = 0f32;
                 }
             }
         }
@@ -228,7 +228,7 @@ impl Plugin for Metro {
             let (timestamp, atom): (TimeStamp, UnidentifiedAtom) = event;
 
             // Play the click for the time slice from last_t until now
-            let frames = timestamp.as_frames().unwrap() as u32;
+            let frames = timestamp.as_frames().unwrap() as usize;
             self.play(ports, last_t, frames);
 
 
@@ -245,7 +245,7 @@ impl Plugin for Metro {
         }
 
         // Play for remainder of cycle
-        self.play(ports, last_t, ports.output.len() as u32); 
+        self.play(ports, last_t, ports.output.len());
     }
 }
 
