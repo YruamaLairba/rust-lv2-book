@@ -117,16 +117,15 @@ impl Metro {
                     ports.output[i] = 0f32;
                 }
             }
-        }
+            //We continuously play the sine wave regardless of the envelope
+            self.wave_offset = (self.wave_offset + 1) % self.wave.len();
 
-        //We continuously play the sine wave regardless of the envelope
-        self.wave_offset = (self.wave_offset + 1) % self.wave.len();
-
-        //Update elapsed time and start attack if necessary
-        self.elapsed_len+=1;
-        if self.elapsed_len == frames_per_beat as u32 {
-            self.state = State::Attack;
-            self.elapsed_len = 0;
+            //Update elapsed time and start attack if necessary
+            self.elapsed_len+=1;
+            if self.elapsed_len == frames_per_beat as u32 {
+                self.state = State::Attack;
+                self.elapsed_len = 0;
+            }
         }
     }
 
