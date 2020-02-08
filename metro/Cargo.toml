@@ -14,3 +14,12 @@ lv2-time = { git = "https://github.com/RustAudio/rust-lv2.git" }
 lv2-units = { git = "https://github.com/RustAudio/rust-lv2.git" }
 lv2-urid = { git = "https://github.com/RustAudio/rust-lv2.git" }
 lv2-sys= { git = "https://github.com/RustAudio/rust-lv2.git" }
+
+[patch."https://github.com/RustAudio/rust-lv2.git"]
+lv2-atom = { git = "https://github.com/YruamaLairba/rust-lv2.git", branch = 'time_spec' }
+lv2-core = { git = "https://github.com/YruamaLairba/rust-lv2.git", branch = 'time_spec' }
+lv2-time = { git = "https://github.com/YruamaLairba/rust-lv2.git", branch = 'time_spec' }
+lv2-units = { git = "https://github.com/YruamaLairba/rust-lv2.git", branch = 'time_spec' }
+lv2-urid = { git = "https://github.com/YruamaLairba/rust-lv2.git", branch = 'time_spec' }
+lv2-sys= { git = "https://github.com/YruamaLairba/rust-lv2.git", branch = 'time_spec' }
+
