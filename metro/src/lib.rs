@@ -2,38 +2,11 @@ use lv2_atom::prelude::*;
 use lv2_atom::space::*;
 use lv2_atom::Atom;
 use lv2_core::prelude::*;
+use lv2_time::prelude::*;
 use lv2_units::prelude::*;
 use lv2_urid::prelude::*;
 use std::f64;
 use std::f64::consts::PI;
-
-#[allow(unused_imports)]
-use lv2_sys::{
-    LV2_TIME__Position, LV2_TIME__Rate, LV2_TIME__Time, LV2_TIME__bar, LV2_TIME__barBeat,
-    LV2_TIME__beat, LV2_TIME__beatUnit, LV2_TIME__beatsPerBar, LV2_TIME__beatsPerMinute,
-    LV2_TIME__frame, LV2_TIME__framesPerSecond, LV2_TIME__position, LV2_TIME__speed,
-    LV2_TIME_PREFIX, LV2_TIME_URI,
-};
-
-struct TimePosition;
-unsafe impl UriBound for TimePosition {
-    const URI: &'static [u8] = LV2_TIME__Position;
-}
-
-struct TimeBarBeat;
-unsafe impl UriBound for TimeBarBeat {
-    const URI: &'static [u8] = LV2_TIME__barBeat;
-}
-
-struct TimeBeatPerMinute;
-unsafe impl UriBound for TimeBeatPerMinute {
-    const URI: &'static [u8] = LV2_TIME__beatsPerMinute;
-}
-
-struct TimeSpeed;
-unsafe impl UriBound for TimeSpeed {
-    const URI: &'static [u8] = LV2_TIME__speed;
-}
 
 pub struct Blank;
 
@@ -92,12 +65,9 @@ enum State {
 
 pub struct Metro {
     atom_urids: AtomURIDCache,
+    time_urids: TimeURIDCache,
     unit_urids: UnitURIDCache,
     blank: URID<Blank>,
-    time_position_urid: URID<TimePosition>,
-    time_barBeat_urid: URID<TimeBarBeat>,
-    time_beatPerMinute_urid: URID<TimeBeatPerMinute>,
-    time_speed_urid: URID<TimeSpeed>,
 
     rate: f64,  // Sample rate
     bpm: f32,   // Beat per minute (tempo)
@@ -167,17 +137,17 @@ impl Metro {
     fn update_position(&mut self, object_reader: lv2_atom::object::ObjectReader) {
         //Received new transport position/speed
         for (property_header, atom) in object_reader {
-            if property_header.key == self.time_beatPerMinute_urid {
+            if property_header.key == self.time_urids.beats_per_minute {
                 if let Some(val) = atom.read(self.atom_urids.float, ()) {
                     self.bpm = val;
                 }
             }
-            if property_header.key == self.time_speed_urid {
+            if property_header.key == self.time_urids.speed {
                 if let Some(val) = atom.read(self.atom_urids.float, ()) {
                     self.speed = val;
                 }
             }
-            if property_header.key == self.time_barBeat_urid {
+            if property_header.key == self.time_urids.bar_beat {
                 if let Some(val) = atom.read(self.atom_urids.float, ()) {
                     // Receveid a beat position, synchronise
                     // This hard sync may cause clicks, a real plugin would
@@ -217,12 +187,9 @@ impl Plugin for Metro {
 
         let res = Self {
             atom_urids: features.map.populate_cache()?,
+            time_urids: features.map.populate_cache()?,
             unit_urids: features.map.populate_cache()?,
             blank: features.map.map_type()?,
-            time_position_urid: features.map.populate_cache()?,
-            time_barBeat_urid: features.map.populate_cache()?,
-            time_beatPerMinute_urid: features.map.populate_cache()?,
-            time_speed_urid: features.map.populate_cache()?,
 
             rate: _plugin_info.sample_rate(),
             bpm: 120f32,
@@ -267,7 +234,7 @@ impl Plugin for Metro {
                     continue;
                 };
 
-            if header.otype == self.time_position_urid {
+            if header.otype == self.time_urids.position {
                 self.update_position(reader);
             }
         }
